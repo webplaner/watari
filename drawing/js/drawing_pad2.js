@@ -128,7 +128,8 @@ var dd_buildStructure = function () {
             return
         }
     }
-    var iconWrapper = document.createElement('div');
+    
+    const iconWrapper = document.createElement('div');
     with(iconWrapper) {
         setAttribute('id', 'dd_drawingToolWrapper');
         with(style) {
@@ -138,13 +139,15 @@ var dd_buildStructure = function () {
             } else {
                 display = "inline-block"
             }
-            width = "74px";
-            padding = "2px";
-            marginLeft = "2px";
-            textAlign = "left"
+
+            width = "100%"; //"74px";
+            padding = "10px";
+            // marginLeft = "2px";
+            textAlign = "center"; //"left"
         }
     }
-    var iconPencilPicker = document.createElement('img');
+
+    const iconPencilPicker = document.createElement('img');
     with(iconPencilPicker) {
         setAttribute('id', 'dd_tool_pencilPicker');
         setAttribute('src', baseURL + dd_imgPath + '/icon_pencil_picker.png');
@@ -156,6 +159,8 @@ var dd_buildStructure = function () {
             style.display = "none"
         }
     }
+
+
     var objPencilPicker = document.createElement('div');
     objPencilPicker.setAttribute('id', 'dd_pencilPicker');
     with(objPencilPicker.style) {
@@ -200,7 +205,8 @@ var dd_buildStructure = function () {
     var iconColorPicker = document.createElement('img');
     with(iconColorPicker) {
         setAttribute('id', 'dd_tool_colorPicker');
-        setAttribute('src', baseURL + dd_imgPath + '/icon_color_picker.png');
+        setAttribute('src', baseURL + dd_imgPath + '/pencil.png');
+        // setAttribute('src', baseURL + dd_imgPath + '/icon_color_picker.png');
         setAttribute('title', 'Change Drawing Color');
         addEventListener('click', function (event) {
             dd_showColorPicker(this, event)
@@ -285,8 +291,10 @@ var dd_buildStructure = function () {
     iconWrapper.appendChild(objPicker);
     iconWrapper.appendChild(iconUndo);
     iconWrapper.appendChild(iconErasor);
-    wrapper.appendChild(objCanvas);
+
     wrapper.appendChild(iconWrapper);
+    wrapper.appendChild(objCanvas);
+
     var objSaveButton = document.getElementById(dd_objSaveButton);
     if (!objSaveButton) {
         var objSaveButtonWrapper = document.createElement('div');
@@ -504,10 +512,14 @@ var dd_buildStructure = function () {
             }), t)
         }
         if (url != "" && url != undefined && url != null) {
+
+            // console.log(url);
+            // console.log(params.length);
+
             rqObj.open('POST', url, true);
             rqObj.setRequestHeader("Content-Type", "application/x-www-form-urlencoded");
-            rqObj.setRequestHeader("Content-Length", params.length);
-            rqObj.setRequestHeader("Connection", "close");
+            // rqObj.setRequestHeader("Content-Length", params.length);
+            // rqObj.setRequestHeader("Connection", "close");
             rqObj.send(params);
             if (typeof (rqObj) != "object") {
                 rqObj = "There is a connection issue at this time.\n\nPlease refresh and try again."
