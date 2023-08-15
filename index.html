@@ -1,0 +1,313 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<html>
+    <head>
+        <meta charset="UTF-8" />
+        <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1" />
+        <title>WATARI Game For Lucky YunSeo</title>
+
+        <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0, user-scalable=no, minimal-ui" />
+        <meta name="apple-mobile-web-app-capable" content="yes" />
+        <meta name="apple-mobile-web-app-status-bar-style" content="black" />
+        <!-- <link rel="apple-touch-icon" sizes="256x256" href="icon-256.png" /> -->
+        <meta name="HandheldFriendly" content="true" />
+        
+        <!-- Chrome for Android web app tags -->
+        <meta name="mobile-web-app-capable" content="yes" />
+        <!-- <link rel="shortcut icon" sizes="256x256" href="icon-256.png" /> -->
+    </head>
+
+    <!-- All margins and padding must be zero for the canvas to fill the screen. -->
+	<style type="text/css">
+		* {
+			padding: 0;
+			margin: 0;
+		}
+
+		html, body {
+			background: #000;
+			color: #fff;
+            height: 100%;
+			/* overflow: hidden; */
+			touch-action: none;
+			-ms-touch-action: none;
+		}
+
+		#main {
+			/* touch-action-delay: none; */
+			touch-action: none;
+			-ms-touch-action: none;
+            width: 100%;
+            height: 100%;
+            min-width: 900px;
+            min-height: 600px;
+
+            position: relative;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;     
+            justify-items: center;
+            align-items: center;
+
+            /* border : solid 1px yellow; */
+		}
+
+		#canvas {
+            width: 900px;
+            height: 600px;
+            background-image: url(./imgs/ysga900.png);
+            background-size: 100%;
+            position: absolute;
+            left : 50%;
+            top : 50%;
+            transform: translate(-450px, -300px);
+
+            /* border : solid 1px red; */
+		}
+
+        #pencil {
+            position: absolute;
+            width: 40px;
+            height: 120px;
+            /* transform: translate(-40px, -240px); */
+        }
+        .p_motion { 
+            left: 430px;
+            top: 170px;
+            animation: motion 1s linear 0s infinite alternate; margin-top: 0;
+        }  
+        .stop_motion { 
+            animation: motion 0.5s linear 0s infinite alternate; margin-top: 0;
+        }                
+        @keyframes motion {
+            0% {margin-top: 0px;}
+            100% {margin-top: 20px;}
+        }
+
+        .p_scroll1 { 
+            animation: scroll1 1s linear 0s infinite alternate;
+        }         
+        @keyframes scroll1 {
+            0% { transform: translate(0px, 0px);  }
+            100% { transform: translate(640px, 0px); }
+        }  
+             
+        .p_scroll2 { 
+            animation: scroll2 1s linear 0s infinite alternate;
+        }         
+        @keyframes scroll2 {
+            0% { transform: translate(0px, 0px);  }
+            100% { transform: translate(600px, 0px); }
+        } 
+        
+        .p_scroll3 { 
+            animation: scroll3 0.6s linear 0s infinite alternate;
+        }         
+        @keyframes scroll3 {
+            0% { transform: translate(0px, 0px);  }
+            100% { transform: translate(250px, 0px); }
+        }         
+
+        .p_scroll4 { 
+            animation: scroll4 0.6s linear 0s infinite alternate;
+        }         
+        @keyframes scroll4 {
+            0% { transform: translate(0px, 0px);  }
+            100% { transform: translate(300px, 0px); }
+        }         
+
+        #btn_play {
+            position: absolute;
+            width: 240px;
+            height: 100px;
+            left: 330px;
+            top: 330px;
+            cursor: pointer;
+            /* transform: translate(-40px, -240px); */
+        }
+
+        #btn_stop {
+            position: absolute;
+            width: 240px;
+            height: 100px;
+            left: 330px;
+            top: 460px;
+            cursor: pointer;
+            display: none;
+            /* transform: translate(-40px, -240px); */
+        }        
+
+    
+        .gbutton { animation: glowing 2s infinite; }        
+        @keyframes glowing {
+            0% {
+                transform: scale(1);
+            }
+            50% {
+                transform: scale(1.05);
+            }
+            100% {
+                transform: scale(1);
+            }
+        }
+
+        #check1, #check2, #check3, #check4 {
+            position: absolute;
+            width: 40px;
+            height: 40px;    
+            display: none;                
+        }
+
+        .checkmark {
+            stroke: green;
+            stroke-dashoffset: 745.74853515625;
+            stroke-dasharray: 745.74853515625;
+            animation: dash 2s ease-out forwards;  /*infinite;*/
+        }
+        @keyframes dash {
+            0% {
+                stroke-dashoffset: 745.74853515625;
+            }
+            100% {
+                stroke-dashoffset: 0;
+            }
+        }
+
+    </style>
+
+    <script src="https://code.jquery.com/jquery-3.7.0.min.js" integrity="sha256-2Pmvv0kuTBOenSvLm6bvfBSSHrUJ+3A7x6P5Ebd07/g=" crossorigin="anonymous"></script>
+
+    <body>
+        <section id="main">
+            <div id="canvas">
+
+                <svg version="1.1" id="check1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" x="0px" y="0px" viewBox="0 0 98.5 98.5" enable-background="new 0 0 98.5 98.5" xml:space="preserve">
+                    <path class="checkmark" fill="none" stroke-width="8" stroke-miterlimit="10" d="M81.7,17.8C73.5,9.3,62,4,49.2,4C24.3,4,4,24.3,4,49.2s20.3,45.2,45.2,45.2s45.2-20.3,45.2-45.2c0-8.6-2.4-16.6-6.5-23.4l0,0L45.6,68.2L24.7,47.3"/>
+                </svg>
+
+                <svg version="1.1" id="check2" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" x="0px" y="0px" viewBox="0 0 98.5 98.5" enable-background="new 0 0 98.5 98.5" xml:space="preserve">
+                    <path class="checkmark" fill="none" stroke-width="8" stroke-miterlimit="10" d="M81.7,17.8C73.5,9.3,62,4,49.2,4C24.3,4,4,24.3,4,49.2s20.3,45.2,45.2,45.2s45.2-20.3,45.2-45.2c0-8.6-2.4-16.6-6.5-23.4l0,0L45.6,68.2L24.7,47.3"/>
+                </svg>                
+
+                <svg version="1.1" id="check3" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" x="0px" y="0px" viewBox="0 0 98.5 98.5" enable-background="new 0 0 98.5 98.5" xml:space="preserve">
+                    <path class="checkmark" fill="none" stroke-width="8" stroke-miterlimit="10" d="M81.7,17.8C73.5,9.3,62,4,49.2,4C24.3,4,4,24.3,4,49.2s20.3,45.2,45.2,45.2s45.2-20.3,45.2-45.2c0-8.6-2.4-16.6-6.5-23.4l0,0L45.6,68.2L24.7,47.3"/>
+                </svg> 
+                
+                <svg version="1.1" id="check4" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" x="0px" y="0px" viewBox="0 0 98.5 98.5" enable-background="new 0 0 98.5 98.5" xml:space="preserve">
+                    <path class="checkmark" fill="none" stroke-width="8" stroke-miterlimit="10" d="M81.7,17.8C73.5,9.3,62,4,49.2,4C24.3,4,4,24.3,4,49.2s20.3,45.2,45.2,45.2s45.2-20.3,45.2-45.2c0-8.6-2.4-16.6-6.5-23.4l0,0L45.6,68.2L24.7,47.3"/>
+                </svg>                 
+
+                <img id="pencil" src="./imgs/pencil2.png" !onclick="alert('111');">
+                <img id="btn_play" src="./imgs/btn_play.png" class="gbutton">
+                <img id="btn_stop" src="./imgs/btn_stop.png" class="gbutton">
+            </div>
+        </section>
+
+
+        <script>
+            const p1_left = 180, p1_top = 40;
+            const p2_left = 220, p2_top = 150; 
+            const p3_left = 130, p3_top = 260; 
+            const p4_left = 525, p4_top = 260; 
+
+            let p_w = 40;
+            let p_h = 120;
+            let game_step = 0;
+
+            jQuery(document).ready(function ()
+            {			
+                $("#canvas #pencil").addClass("p_motion");
+                // $("#pencil").addClass("p_scroll1");
+
+                let pos = $("#pencil").position();
+
+
+                $("#btn_play").click(function(){
+                    $("#btn_play").hide();
+                    $("#btn_stop").show();
+                    $("#pencil").removeClass("p_motion");
+                    $("#pencil").removeClass("stop_motion");
+
+                    if (game_step == 0)
+                    {
+                        $("#pencil").css({'left': p1_left + 'px', 'top': p1_top + 'px'});
+                        $("#pencil").addClass("p_scroll1");
+                    }
+                    else if (game_step == 1)
+                    {                 
+                        $("#pencil").css({'left': p2_left + 'px', 'top': p2_top + 'px'});
+                        $("#pencil").addClass("p_scroll2");
+                    }  
+                    else if (game_step == 2)
+                    {                 
+                        $("#pencil").css({'left': p3_left + 'px', 'top': p3_top + 'px'});
+                        $("#pencil").addClass("p_scroll3");
+                    }  
+                    else if (game_step == 3)
+                    {                 
+                        $("#pencil").css({'left': p4_left + 'px', 'top': p4_top + 'px'});
+                        $("#pencil").addClass("p_scroll4");
+                    }                                                            
+                    //alert("it works!");
+                 });  
+                 
+                 $("#btn_stop").click(function(){
+
+                    
+                    
+                    // $("#btn_play").hide();
+                    $("#btn_stop").hide();
+                    
+
+                    pos = $("#pencil").position();                   
+                    console.log(pos.left + p_w);
+                    console.log(pos.top + p_h);    
+
+                    if (game_step == 0)
+                    {
+                        $("#pencil").removeClass("p_scroll1");                   
+                        $("#pencil").css({'left': pos.left + 'px', 'top': pos.top + 'px'});
+                        $("#pencil").addClass("stop_motion");   
+
+                        $("#check1").css({'left': pos.left + 'px', 'top': pos.top + 120 + 'px'});
+                        $("#check1").show();
+                    }
+                    else if (game_step == 1)
+                    {
+                        $("#pencil").removeClass("p_scroll2");                   
+                        $("#pencil").css({'left': pos.left + 'px', 'top': pos.top + 'px'});
+                        $("#pencil").addClass("stop_motion");   
+
+                        $("#check2").css({'left': pos.left + 'px', 'top': pos.top + 120 + 'px'});
+                        $("#check2").show();
+                    } 
+                    else if (game_step == 2)
+                    {
+                        $("#pencil").removeClass("p_scroll3");                   
+                        $("#pencil").css({'left': pos.left + 'px', 'top': pos.top + 'px'});
+                        $("#pencil").addClass("stop_motion");   
+
+                        $("#check3").css({'left': pos.left + 'px', 'top': pos.top + 120 + 'px'});
+                        $("#check3").show();
+                    } 
+                    else if (game_step == 3)
+                    {
+                        $("#pencil").removeClass("p_scroll4");                   
+                        $("#pencil").css({'left': pos.left + 'px', 'top': pos.top + 'px'});
+                        $("#pencil").addClass("stop_motion");   
+
+                        $("#check4").css({'left': pos.left + 'px', 'top': pos.top + 120 + 'px'});
+                        $("#check4").show();
+                    }                                                            
+
+                    game_step++;
+
+                    if (game_step <= 3) setTimeout("$('#btn_play').show()", 2000);
+                    // //alert("it works!");
+                 });                   
+
+
+            });
+        </script>        
+    </body>
+</html>

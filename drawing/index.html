@@ -1,0 +1,116 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+	<meta charset="UTF-8" />
+<title>WEB DRAWING PAD</title>
+<style type="text/css">
+.alignC {
+	text-align: center;
+}
+#testDiv {
+	position: relative;
+	width: 400px;
+	min-height: 400px;
+	padding: 0px;
+	margin: 0px auto;
+	color: #000000;
+	background-color: #ffffff;
+	border: solid 1px #c0c0c0;
+	overflow: hidden;
+	border-radius: 5pt;
+	box-shadow: 0pt 0pt 4pt #c0c0c0;
+}
+#testTitle {
+	position: relative;
+	margin: -20px -20px 20px -20px;
+	color: #ffffff;
+	background-color: #808080;
+}
+#testTitle h1, #testTitle h2, #testTitle h3 {
+	margin: 0px;
+	padding: 8px;
+}
+#DrawSet {
+	position: relative;
+	height: 400px;
+	margin: 0px 0px 0px 0px;
+	padding: 0px;
+	text-align: center;
+	border: solid 1px #c0c0c0;
+	background-color: #efefef;
+	border-radius: 4pt;
+}
+#footerDiv {
+	position: relative;
+	width: 600px;
+	padding: 20px;
+	margin: 30px auto;
+	text-align: center;
+	font-size: 12px;
+	color: #000000;
+	background-color: #ffffff;
+	border: solid 1px #c0c0c0;
+	overflow: hidden;
+	border-radius: 5pt;
+	box-shadow: 0pt 0pt 4pt #c0c0c0;
+}
+</style>
+<script type="text/javascript">
+function drawing_postSaveAction(f) {
+	var objParent=document.getElementById('testDiv');
+	var objDiv=document.createElement('div');
+	with(objDiv) {
+		setAttribute('id','demo_downloadWrapper');
+		with(style) {
+			position="relative";
+			padding="10px";
+			textAlign="left";
+			margin="15px 70px 0px 70px";
+			border="solid 1px #c0c0c0";
+			backgroundColor="#efefef";
+			borderRadius="4pt";
+		}
+		innerHTML="<h4>Drawing saved to image. Click to download.</h4>";
+		innerHTML+="<ul><li><a href=\"drawing_pad_process.php?download="+f+"\" target=\"_blank\">"+f+"</a></li></ul>";
+	}
+	objParent.appendChild(objDiv);
+}
+</script>
+
+<!-- INCUDE OUR NEC. FILES -->
+<link type="text/css" rel="stylesheet" media="screen" href="./css/drawing_pad.css" />	
+<script type="text/javascript" src="./js/drawing_pad2.js"></script>
+<!-- END OF NEC. FILES -->
+</head>
+<body>
+
+
+<div id="testDiv">
+	
+	<!-- <div id="testTitle">
+		<h2>DRAWING PAD</h1>
+	</div> -->
+	
+	<!-- <ul><strong style="color:#ff0000;">Features:</strong><br />
+		<li>Export drawing directly to PNG image format</li>
+		<li>Lots of customizable options</li>
+		<li>Compatible with Touch-Screen devices, including iPhones, iPads &amp; iPod Touch!</li>
+		<li>Change drawing color on the fly</li>
+		<li>Change pencil thickness</li>
+		<li>Unlimited Undo</li>
+		<li>No jQuery libraries needed</li>
+	</ul> -->
+	
+	<div id="DrawSet">
+		<div id="drawing_padWrapper"></div>
+	</div>
+
+</div>
+<div id="footerDiv">
+	Designed &amp; Developed by: Lucky Daddy 
+	<!-- @ <a href="http://www.dreamdesignsweb.com" target="_new">www.dreamdesignsweb.com</a> -->
+</div>
+
+
+</body>
+</html>
