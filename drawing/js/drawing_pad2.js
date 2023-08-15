@@ -150,7 +150,8 @@ var dd_buildStructure = function () {
     const iconPencilPicker = document.createElement('img');
     with(iconPencilPicker) {
         setAttribute('id', 'dd_tool_pencilPicker');
-        setAttribute('src', baseURL + dd_imgPath + '/icon_pencil_picker.png');
+        // setAttribute('src', baseURL + dd_imgPath + '/icon_pencil_picker.png');
+        setAttribute('src', baseURL + dd_imgPath + '/pencil.png');
         setAttribute('title', 'Change Pencil Thickness');
         addEventListener('click', function (event) {
             dd_showPencilPicker(this, event)
