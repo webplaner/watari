@@ -1,3 +1,4 @@
-
+tmp
+tmp/*
+*/.DS_Store
 .DS_Store
-drawing/.DS_Store
