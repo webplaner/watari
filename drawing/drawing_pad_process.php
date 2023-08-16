@@ -13,7 +13,7 @@
 * -------------------------------
 */
 $dd_savePath=str_replace('\\','/',dirname(__FILE__))."/tmp";
-$prependSig="drawing_";
+$prependSig="wa_";
 /**
 * -------------------------------
 * End of customizable settings

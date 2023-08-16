@@ -1,52 +1,56 @@
 // http abs path (i.e. http://mydomain.com)
-var baseURL = "";
+const baseURL = "http://wa.12file.au";
 // Path to images
-var dd_imgPath = "./images/drawing_pad";
+const dd_imgPath = "/drawing/images/drawing_pad";
 // Display alert on object load if there's 'toDataURL' support. false = show onclick of submit
-var dd_noDataURLOnLoad = false;
+const dd_noDataURLOnLoad = false;
 // Save button ID; if it doesn't already exist, it will be created
-var dd_objSaveButton = "dd_saveButton";
+const dd_objSaveButton = "dd_saveButton";
 // Save button name
-var dd_objSaveButtonName = "그림 저장하기";
-// Drawing output to image file name
-var dd_outputFileName = "mysig";
+const dd_objSaveButtonName = "그림을 저장합니다";
+
 // Data processor location file + path
-var dd_dataProcessURL = "drawing_pad_process.php";
+const dd_dataProcessURL = "drawing_pad_process.php";
+
 // Do an action 'AFTER' saving drawing (exporting to image)
-var dd_doPostAction = {
-    dataSaved: function (f) {
-        
+const dd_doPostAction = {
+    dataSaved: function (f) {       
         // Add your code here. The 'f' var is the filename passed back
         
-        // This line is for testing purposes and can be removed
-        // along with the function it calls
         drawing_postSaveAction(f);
     }
 };
-var dd_callbacks = {
-    
-    submit: function (t) {
-        
+
+const dd_callbacks = {    
+    submit: function (t) {        
         // Add your code here; i.e. function, statements, etc
-    }
-    
+
+    }    
 };
+
+// Drawing output to image file name
+const d = new Date();
+const dd_outputFileName = d.getTime();
+
 // Canvas element options
-var dd_baseCanvas = {
+const dd_baseCanvas = {
     'format': 'png', // Final output format for converting to *DO NOT CHANGE AS IT CURRENTLY ONLY SUPPORTS PNG
-    'width': 460, // Canvas html width (not css width)
-    'height': 320, // Canvas html height (not css width)
+    'width': 600, // Canvas html width (not css)
+    'height': 380, // Canvas html height (not css)
     'border': 'solid 1px #c0c0c0', // CSS notation; i.e. 'solid 1px #c0c0c0'
     'bg': '#ffffff', // CSS notation
     'linewidth': 2, // Drawing line thickness (caution: in webkit browser, if setting this to 1, set shadowblur to 0)
+    'lineBrush': 6,
+    'linePaint': 15,
     'color': '#000000', // Drawing line color
     'shadowcolor': '#000000', // Drawing line shadow color
     'shadowblur': 2, // Drawing line shadow shadow blur (FF browsers)
     'shadowblur_wk': 2, // Drawing line shadow shadow blur (Webkit)
     'shadowblur_ie': 2 // Drawing line shadow shadow blur (IE)
 };
+
 // Various jscript alert notices
-var dd_alert = {
+const dd_alert = {
     // If no html5 support
     'nohtml5': 'Your device does not yet support some important features of HTML5.',
     // If html5 suppport but no export to image support (toDataURL)
@@ -57,51 +61,52 @@ var dd_alert = {
     'savefail': 'I could not save your drawing. Please try again.'
 }
 // Enable or Disable tools
-var dd_allowTools = {
-    'picker': false
+const dd_allowTools = {
+    'picker': true
     , 'pencil': true
-    , 'undo': false
-    , 'delete': false
+    , 'undo': true
+    , 'delete': true
 };
+
 // Position of pencil picker display;
-var dd_pencilPicker_show = "left";
+const dd_pencilPicker_show = "left";
 // Position of color picker display;
-var dd_colorPicker_show = "left";
+const dd_colorPicker_show = "left";
 // Color pallete colors
-var dd_colors = new Array(
+const dd_colors = new Array(
     '000000', '993300', '333300', '000080', '333399', '333333', '800000', 'FF6600', '808000', '008000', '008080', '0000FF', '666699', '808080', 'FF0000', 'FF9900', '99CC00', '339966', '33CCCC', '3366FF', '800080', '999999', 'FF00FF', 'FFCC00', 'FFFF00', '00FF00', '00FFFF', '00CCFF', '993366', 'C0C0C0', 'FF99CC', 'FFCC99', 'FFFF99', 'CCFFFF', '99CCFF', 'FFFFFF'
 );
 // Default cursor position (draw position) for Google Chrome
-var dd_webkitCursorOffset = "20 25";
+const dd_webkitCursorOffset = "20 25";
 // 'Draw' the drawing area drawing to an existing element on page
-var dd_print2Element = '';
-/**
- * ------------------------------------
- * End of Customizable Settings
- * ------------------------------------
- */
+const dd_print2Element = '';
 
 /**
  * Defined Variables (do not modify these)
  */
-var dd_toDataURLExist = false;
-var dd_drawingStarted = false;
-var dd_drawnLines = new Array();
-var dd_drawnPoint = 0;
+let dd_toDataURLExist = false;
+let dd_drawingStarted = false;
+
+let dd_drawnLines = new Array();
+let dd_drawnPoint = 0;
+let dd_drawColor = '000000';
+let dd_drawWidth = 2;
+
 /**
  * Let's load in all our functions, methods, vars and more
  */
-var dd_buildStructure = function () {
-    var wrapper = document.getElementById('drawing_padWrapper');
+const dd_buildStructure = function () {
+    let wrapper = document.getElementById('drawing_padWrapper');
     if (!wrapper) {
         alert('Error!!\nYou are missing the Div Element: \'drawing_padWrapper\'');
         return
     }
-    var objCanvas = document.createElement('canvas');
+
+    let objCanvas = document.createElement('canvas');
     with(objCanvas) {
         setAttribute('id', 'dd_canvas');
         setAttribute('width', dd_baseCanvas['width']);
-        setAttribute('height', dd_baseCanvas['height']);
+        setAttribute('height', dd_baseCanvas['height']);       
         with(style) {
             display = "inline-block";
             border = dd_baseCanvas['border'];
@@ -116,7 +121,8 @@ var dd_buildStructure = function () {
             , 'todataurl': (data.indexOf("data:image/png") != -1 ? true : false)
         }
     };
-    var checks = checkFunctions(objCanvas);
+
+    let checks = checkFunctions(objCanvas);
     if (checks['html5'] == false) {
         alert(dd_alert['nohtml5']);
         return
@@ -129,7 +135,7 @@ var dd_buildStructure = function () {
         }
     }
     
-    const iconWrapper = document.createElement('div');
+    let iconWrapper = document.createElement('div');
     with(iconWrapper) {
         setAttribute('id', 'dd_drawingToolWrapper');
         with(style) {
@@ -147,12 +153,18 @@ var dd_buildStructure = function () {
         }
     }
 
-    const iconPencilPicker = document.createElement('img');
+    let iconPencilPicker = document.createElement('img');
     with(iconPencilPicker) {
         setAttribute('id', 'dd_tool_pencilPicker');
+        with(style) {
+            marginRight = "10px";
+            marginLeft = "10px";
+        }        
         // setAttribute('src', baseURL + dd_imgPath + '/icon_pencil_picker.png');
-        setAttribute('src', baseURL + dd_imgPath + '/pencil.png');
-        setAttribute('title', 'Change Pencil Thickness');
+        setAttribute('src', baseURL + dd_imgPath + '/pencil-64.png');
+        setAttribute('width', 40);
+        setAttribute('height', 40);
+        setAttribute('title', 'Change brush');
         addEventListener('click', function (event) {
             dd_showPencilPicker(this, event)
         }, false);
@@ -162,7 +174,7 @@ var dd_buildStructure = function () {
     }
 
 
-    var objPencilPicker = document.createElement('div');
+    let objPencilPicker = document.createElement('div');
     objPencilPicker.setAttribute('id', 'dd_pencilPicker');
     with(objPencilPicker.style) {
         position = "absolute";
@@ -170,7 +182,7 @@ var dd_buildStructure = function () {
         width = "100px";
         height = "auto";
         textAlign = "left";
-        padding = "2px 0px 2px 2px";
+        padding = "10px";
         color = "inherit";
         backgroundColor = "#ffffff";
         border = "solid 1px #c0c0c0";
@@ -178,35 +190,44 @@ var dd_buildStructure = function () {
         boxShadow = "0pt 0pt 1pt #808080";
         zIndex = "99"
     }
-    var pencilOptions = {
-        'Thin': 'pencil_option_1.png'
-        , 'Normal': 'pencil_option_2.png'
-        , 'Thick': 'pencil_option_3.png'
+    const pencilOptions = {
+        'Pencil': 'pencil-64.png'
+        , 'Brush': 'brush-64.png'
+        , 'Paint': 'paint-64.png'
     };
-    for (var p in pencilOptions) {
+    for (let p in pencilOptions) {
         var pen = document.createElement('img');
         pen.setAttribute('src', baseURL + dd_imgPath + '/' + pencilOptions[p]);
+        pen.setAttribute('width', 30);
+        pen.setAttribute('height', 30);        
         pen.setAttribute('title', p);
         with(pen.style) {
             border = "solid 1px #ffffff"
         }
         pen.addEventListener('mouseover', function (event) {
             this.style.cursor = "pointer";
-            this.style.border = "solid 1px #00ff00"
+            // this.style.border = "solid 1px #00ff00"
         }, false);
         pen.addEventListener('mouseout', function (event) {
             this.style.cursor = "auto";
-            this.style.border = "solid 1px #ffffff"
+            // this.style.border = "solid 1px #ffffff"
         }, false);
         pen.addEventListener('click', function (event) {
             dd_canvasFormat(this, 'line', objCanvas)
         }, false);
         objPencilPicker.appendChild(pen)
     }
-    var iconColorPicker = document.createElement('img');
+
+    let iconColorPicker = document.createElement('img');
     with(iconColorPicker) {
         setAttribute('id', 'dd_tool_colorPicker');
-        setAttribute('src', baseURL + dd_imgPath + '/pencil.png');
+        with(style) {
+            marginRight = "10px";
+            marginLeft = "10px";
+        }          
+        setAttribute('src', baseURL + dd_imgPath + '/color-64.png');
+        setAttribute('width', 40);
+        setAttribute('height', 40);        
         // setAttribute('src', baseURL + dd_imgPath + '/icon_color_picker.png');
         setAttribute('title', 'Change Drawing Color');
         addEventListener('click', function (event) {
@@ -219,7 +240,8 @@ var dd_buildStructure = function () {
     window.addEventListener('click', function (event) {
         dd_hidePickers(this, event)
     }, false);
-    var objPicker = document.createElement('div');
+    
+    let objPicker = document.createElement('div');
     objPicker.setAttribute('id', 'dd_colorPicker');
     with(objPicker.style) {
         position = "absolute";
@@ -235,8 +257,8 @@ var dd_buildStructure = function () {
         boxShadow = "0pt 0pt 1pt #808080";
         zIndex = "99"
     }
-    for (var p = 0; p < dd_colors.length; p++) {
-        var col = document.createElement('div');
+    for (let p = 0; p < dd_colors.length; p++) {
+        let col = document.createElement('div');
         with(col) {
             setAttribute('id', 'dd_color_' + dd_colors[p]);
             setAttribute('color', dd_colors[p]);
@@ -262,22 +284,17 @@ var dd_buildStructure = function () {
         }
         objPicker.appendChild(col)
     }
-    var iconErasor = document.createElement('img');
-    with(iconErasor) {
-        setAttribute('id', 'dd_tool_erasor');
-        setAttribute('src', baseURL + dd_imgPath + '/icon_erasor.png');
-        setAttribute('title', 'Clear Drawing Pad');
-        addEventListener('click', function (event) {
-            dd_clearCanvas(this, objCanvas)
-        }, false);
-        if (!dd_allowTools['delete']) {
-            style.display = "none"
-        }
-    }
-    var iconUndo = document.createElement('img');
+
+    let iconUndo = document.createElement('img');
     with(iconUndo) {
         setAttribute('id', 'dd_tool_undo');
-        setAttribute('src', baseURL + dd_imgPath + '/icon_undo.png');
+        with(style) {
+            marginRight = "10px";
+            marginLeft = "10px";
+        }         
+        setAttribute('src', baseURL + dd_imgPath + '/undo-64.png');
+        setAttribute('width', 40);
+        setAttribute('height', 40);        
         setAttribute('title', 'Undo Last Line');
         addEventListener('click', function (event) {
             dd_undo(this)
@@ -286,6 +303,27 @@ var dd_buildStructure = function () {
             style.display = "none"
         }
     }
+
+    let iconErasor = document.createElement('img');
+    with(iconErasor) {
+        setAttribute('id', 'dd_tool_erasor');
+        with(style) {
+            marginRight = "10px";
+            marginLeft = "10px";
+        }         
+        setAttribute('src', baseURL + dd_imgPath + '/delete-64.png');
+        setAttribute('width', 40);
+        setAttribute('height', 40);        
+        setAttribute('title', 'Clear Drawing Pad');
+        addEventListener('click', function (event) {
+            dd_clearCanvas(this, objCanvas)
+        }, false);
+        if (!dd_allowTools['delete']) {
+            style.display = "none"
+        }
+    }
+
+
     iconWrapper.appendChild(iconPencilPicker);
     iconWrapper.appendChild(objPencilPicker);
     iconWrapper.appendChild(iconColorPicker);
@@ -296,20 +334,23 @@ var dd_buildStructure = function () {
     wrapper.appendChild(iconWrapper);
     wrapper.appendChild(objCanvas);
 
-    var objSaveButton = document.getElementById(dd_objSaveButton);
+    let objSaveButton = document.getElementById(dd_objSaveButton);
     if (!objSaveButton) {
-        var objSaveButtonWrapper = document.createElement('div');
+        let objSaveButtonWrapper = document.createElement('div');
         with(objSaveButtonWrapper) {
             setAttribute('id', 'dd_objSaveButtonWrapper');
             with(style) {
                 position = "relative";
-                clear = "both"
+                clear = "both";
             }
         }
         objSaveButton = document.createElement('div');
         with(objSaveButton) {
             setAttribute('id', dd_objSaveButton);
             innerHTML = dd_objSaveButtonName
+            with(style) {
+                padding = "8px 16px";
+            }            
         }
         objSaveButtonWrapper.appendChild(objSaveButton);
         wrapper.appendChild(objSaveButtonWrapper)
@@ -318,6 +359,7 @@ var dd_buildStructure = function () {
         dd_saveDrawing(this, event);
         dd_callbacks.submit(this)
     }, false);
+
     dd_agentWK = (navigator.userAgent.indexOf('AppleWebKit') != -1 ? true : false);
     dd_agentFF = (navigator.userAgent.indexOf('Firefox') != -1 ? true : false);
     dd_agentIE = (navigator.userAgent.indexOf('MSIE') != -1 ? true : false);
@@ -360,12 +402,12 @@ var dd_buildStructure = function () {
         dd_drawnPoint--;
         dd_drawnPoint = (dd_drawnPoint < 0 ? 0 : dd_drawnPoint);
         dd_drawnLines.splice((dd_drawnLines.length - 1), 1);
-        dd_canvasFormat('undo', 'color', objCanvas)
+        dd_canvasFormat(t, 'undo', objCanvas);
     };
     
     function dd_showPencilPicker(t, e) {
-        var selfX = t.offsetLeft;
-        var selfY = t.offsetTop;
+        let selfX = t.offsetLeft;
+        let selfY = t.offsetTop;
         if (objPencilPicker) {
             with(objPencilPicker.style) {
                 switch (dd_pencilPicker_show) {
@@ -391,8 +433,8 @@ var dd_buildStructure = function () {
     };
     
     function dd_showColorPicker(t, e) {
-        var selfX = t.offsetLeft;
-        var selfY = t.offsetTop;
+        let selfX = t.offsetLeft;
+        let selfY = t.offsetTop;
         if (objPicker) {
             with(objPicker.style) {
                 switch (dd_colorPicker_show) {
@@ -428,44 +470,73 @@ var dd_buildStructure = function () {
     };
     
     function dd_canvasFormat(t, a, o) {
-        switch (a) {
-        case "color":
-            var canvas = o.getContext('2d');
-            dd_clearCanvas('format', o);
-            if (t != "undo") {
-                canvas.strokeStyle = "#" + t.getAttribute('color');
-                canvas.shadowColor = "#" + t.getAttribute('color')
-            }
-            canvas.beginPath();
-            for (var i = 0; i < dd_drawnLines.length; i++) {
+        switch (a) 
+        {
+            case "undo":
+            {
+                // console.log('undo');
+                let canvas = o.getContext('2d');
+                dd_clearCanvas('format', o);
+
                 canvas.beginPath();
-                for (var z = 0; z < dd_drawnLines[i]['x'].length; z++) {
-                    if (z == 0) {
-                        canvas.moveTo(dd_drawnLines[i]['x'][z], dd_drawnLines[i]['y'][z])
-                    } else if (dd_drawnLines[i]['x'][z] != "" && dd_drawnLines[i]['y'][z] != "") {
-                        canvas.lineTo(dd_drawnLines[i]['x'][z], dd_drawnLines[i]['y'][z]);
-                        canvas.stroke()
+                for (let i = 0; i < dd_drawnLines.length; i++) {
+                    canvas.beginPath();
+
+                    canvas.strokeStyle = "#" + dd_drawnLines[i]['c'];
+                    canvas.shadowColor = "#" + dd_drawnLines[i]['c'];
+
+                    canvas.lineWidth = dd_drawnLines[i]['w'];
+
+                    for (let z = 0; z < dd_drawnLines[i]['x'].length; z++) {
+                        if (z == 0) {
+                            canvas.moveTo(dd_drawnLines[i]['x'][z], dd_drawnLines[i]['y'][z])
+                        } else if (dd_drawnLines[i]['x'][z] != "" && dd_drawnLines[i]['y'][z] != "") {
+                            canvas.lineTo(dd_drawnLines[i]['x'][z], dd_drawnLines[i]['y'][z]);
+                            canvas.stroke()
+                        }
                     }
                 }
-            }
-            if (dd_drawnLines.length == 0) {
-                dd_drawingStarted = false
-            } else {
-                dd_drawingStarted = true
+
+                if (dd_drawnLines.length == 0) {
+                    dd_drawingStarted = false
+                } else {
+                    dd_drawingStarted = true
+                }
+
+                context.lineWidth = dd_drawWidth;
+                canvas.strokeStyle = "#" + dd_drawColor;
+                canvas.shadowColor = "#" + dd_drawColor;                
             }
             break;
-        default:
-            context = o.getContext('2d');
-            if (t.title == "Thin") {
-                context.lineWidth = 2
-            } else if (t.title == "Normal") {
-                context.lineWidth = dd_baseCanvas['linewidth']
-            } else {
-                context.lineWidth = 4
+
+        case "color":
+            {
+                let canvas = o.getContext('2d');
+                canvas.strokeStyle = "#" + t.getAttribute('color');
+                canvas.shadowColor = "#" + t.getAttribute('color');
+                dd_drawColor = t.getAttribute('color');
             }
-            if (t.title == "Thin") {
-                context.shadowBlur = (dd_agentWK ? 0 : 1)
-            } else {
+            break;
+
+        default:
+            {
+                let context = o.getContext('2d');
+                if (t.title == "Pencil") {
+                    context.lineWidth = dd_baseCanvas['linewidth'];
+                    iconPencilPicker.setAttribute('src', baseURL + dd_imgPath + '/pencil-64.png');
+                } else if (t.title == "Brush") {
+                    context.lineWidth = dd_baseCanvas['lineBrush'];
+                    iconPencilPicker.setAttribute('src', baseURL + dd_imgPath + '/brush-64.png');
+                } else {
+                    context.lineWidth = dd_baseCanvas['linePaint'];
+                    iconPencilPicker.setAttribute('src', baseURL + dd_imgPath + '/paint-64.png');
+                }
+
+                dd_drawWidth = context.lineWidth;
+
+                // if (t.title == "Thin") {
+                //     context.shadowBlur = (dd_agentWK ? 0 : 1)
+                // } else {
                 if (dd_agentIE) {
                     context.shadowBlur = dd_baseCanvas['shadowblur_ie']
                 } else if (dd_agentWK) {
@@ -473,7 +544,9 @@ var dd_buildStructure = function () {
                 } else {
                     context.shadowBlur = dd_baseCanvas['shadowblur']
                 }
+                // }
             }
+            break;
         }
     };
     var dd_xmlTimer = null;
@@ -563,10 +636,10 @@ var dd_buildStructure = function () {
                 } catch (er) {};
                 var info = rq.responseText;
                 if (info.indexOf('success|') != -1) {
-                    var brkI = info.split('|');
-                    if (elementWritable) {
-                        t.innerHTML = "Saved!"
-                    }
+                    let brkI = info.split('|');
+                    // if (elementWritable) {
+                    //     t.innerHTML = "Saved!"
+                    // }
                     if (dd_print2Element != '') {
                         var e, isWriteObj;
                         if (typeof (dd_print2Element) == 'string') {
@@ -605,9 +678,10 @@ var dd_buildStructure = function () {
         }
         alert(dd_alert['savefail'])
     };
-    var touchEnabled = ('ontouchstart' in document.documentElement ? true : false);
-    var context, tool, offX, offY;
-    var initCanvas = function (canvas) {
+
+    let touchEnabled = ('ontouchstart' in document.documentElement ? true : false);
+    let context, tool, offX, offY;
+    const initCanvas = function (canvas) {
         if (touchEnabled) {
             offY = 0;
             offX = 0;
@@ -655,10 +729,15 @@ var dd_buildStructure = function () {
                     dd_drawnLines.push({
                         'x': new Array()
                         , 'y': new Array()
+                        , 'c': ''
+                        , 'c': 1
                     });
                     dd_drawnLines[dd_drawnPoint]['x'].push(e._x);
                     dd_drawnLines[dd_drawnPoint]['y'].push(e._y);
-                    dd_drawnPoint++
+                    dd_drawnLines[dd_drawnPoint]['c'] = dd_drawColor;
+                    dd_drawnLines[dd_drawnPoint]['w'] = context.lineWidth;
+                    dd_drawnPoint++;
+                    // dd_drawnColors.push(dd_drawColor);
                 }
                 tool.started = true
             };
@@ -668,10 +747,17 @@ var dd_buildStructure = function () {
                     context.lineTo(e._x, e._y);
                     context.stroke();
                     if (!isNaN(e._x)) {
-                        dd_drawnLines[dd_drawnPoint - 1]['x'].push(e._x)
+                        dd_drawnLines[dd_drawnPoint - 1]['x'].push(e._x);
                     }
                     if (!isNaN(e._y)) {
-                        dd_drawnLines[dd_drawnPoint - 1]['y'].push(e._y)
+                        dd_drawnLines[dd_drawnPoint - 1]['y'].push(e._y);
+                    }
+
+                    if (!isNaN(e._x) || !isNaN(e._y))
+                    {
+                        // dd_drawnColors[dd_drawnPoint - 1].push(dd_drawColor);
+                        dd_drawnLines[dd_drawnPoint - 1]['c'] = dd_drawColor;
+                        dd_drawnLines[dd_drawnPoint - 1]['w'] = context.lineWidth;
                     }
                 }
             };

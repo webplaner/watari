@@ -11,10 +11,10 @@
 */
 #drawing_padWrapper {
 	position: relative;
-	float: left;
+	/* float: left; */
 	width: 100%;
 	height: 100%;
-	border: solid 1px red;
+	/* border: solid 1px red; */
 }
 /**
 * Canvas element
