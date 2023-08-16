@@ -135,7 +135,18 @@
             cursor: pointer;
             display: none;
             /* transform: translate(-40px, -240px); */
-        }        
+        }  
+        
+        #d_link {
+            position: absolute;
+            width: 64px;
+            height: 64px;
+            left: 600px;
+            top: 350px;
+            cursor: pointer;
+            /* display: none; */
+            /* transform: translate(-40px, -240px); */
+        }          
 
     
         .gbutton { animation: glowing 2s infinite; }        
@@ -200,6 +211,8 @@
                 <img id="pencil" src="./imgs/pencil2.png" !onclick="alert('111');">
                 <img id="btn_play" src="./imgs/btn_play.png" class="gbutton">
                 <img id="btn_stop" src="./imgs/btn_stop.png" class="gbutton">
+
+                <a href="/drawing"><img id="d_link" src="./drawing/images/drawing_pad/colorpicker.png"></a>
             </div>
         </section>
 
@@ -224,6 +237,9 @@
 
                 $("#btn_play").click(function(){
                     $("#btn_play").hide();
+
+                    $("#d_link").hide();
+
                     $("#btn_stop").show();
                     $("#pencil").removeClass("p_motion");
                     $("#pencil").removeClass("stop_motion");
